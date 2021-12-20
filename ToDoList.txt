@@ -1,7 +1,7 @@
-0) GitHub
-0.1) Armadillo vs stl
-1) Sommabilità delle variabili ausiliarie con corr. n.n.
-2) Parallellizare
-3) Nuovi integratori
-4) Scrittura tesi (Overleaf)
-5) Implementazione Shadow
+• GitHub (done)
+• Armadillo vs stl
+• Sommabilità delle variabili ausiliarie con corr. n.n.
+• Parallellizare
+• Nuovi integratori
+• Scrittura tesi (Overleaf)
+• Implementazione Shadow
