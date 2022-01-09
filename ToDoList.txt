@@ -1,6 +1,6 @@
-• GitHub (done)
-• Armadillo vs stl
-• Sommabilità delle variabili ausiliarie con corr. n.n.
+• GitHub (fatto)
+• Armadillo vs stl (fatto)
+• Sommabilità delle variabili ausiliarie con corr. n.n. (fatto)
 • Parallellizare
 • Nuovi integratori
 • Scrittura tesi (Overleaf)
