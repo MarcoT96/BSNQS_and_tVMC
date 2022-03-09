@@ -1,0 +1,42 @@
+Number_of_Spin                                                       0
+Density_of_Hidden_variables                                          0
+If_phi_neq_zero                                                      0
+
+Spin-Spin_interaction_strength                                       0
+Initial_magnetic_field                                               0 
+Final_magnetic_field                                                 0
+
+If_vmc                                                               0
+If_imaginary_time_dynamics                                           0
+If_real_time_dynamics                                                0
+If_QGT_regularization                                                0
+Integration_step_parameter                                           0
+Number_of_optimization_steps                                         0
+
+Number_of_blocks                                                     0
+Number_of_MC_sweeps                                                  0
+Number_of_initial_MC_equilibration_steps                             0
+Number_of_MC_equilibration_steps                                     0 
+Number_of_bunch_of_spin                                              0
+Bunch_of_spin_dimension                                              0
+Equal_site_move_probability                                          0
+Visible_n.n._move_probability                                        0
+Hidden_n.n._move_probability                                         0
+If_restart_from_config                                               0
+If_hidden_off                                                        0
+Orientation_bias                                                     0
+If_extra_hidden_sums                                                 0
+Number_of_extra_sums                                                 0
+Number_of_hidden_blocks                                              0
+
+Option_for_output_file                                                
+If_write_move_statistics                                             0
+If_write_MCMC_config                                                 0
+If_write_final_config                                                0
+If_write_opt_obs                                                     0
+If_write_block_obs                                                   0
+If_write_opt_params                                                  0
+If_write_all_params                                                  0
+If_write_qgt_matrix                                                  0
+if_write_qgt_cond                                                    0
+If_write_QGT_eigen                                                   0

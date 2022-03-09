@@ -1,0 +1,42 @@
+Number_of_Spin                                                        6
+Density_of_Hidden_variables                                           1
+If_phi_neq_zero                                                       1
+
+Spin-Spin_interaction_strength                                        1.0
+Initial_magnetic_field                                                0.5
+Final_magnetic_field                                                  0.5
+
+If_vmc                                                                0
+If_imaginary_time_dynamics                                            1
+If_real_time_dynamics                                                 0
+If_QGT_regularization                                                 0
+Integration_step_parameter                                            0.01
+Number_of_optimization_steps                                          500
+
+Number_of_blocks                                                      50
+Number_of_MC_sweeps_per_process                                       1000
+Number_of_initial_MC_equilibration_steps_per_process                  1000
+Number_of_MC_equilibration_steps                                      0
+Number_of_bunch_of_spin                                               6
+Bunch_of_spin_dimension                                               1
+Equal_site_move_probability                                           0.00
+Visible_n.n._move_probability                                         0.00
+Hidden_n.n._move_probability                                          0.00
+If_restart_from_config                                                1
+If_hidden_off                                                         0
+Orientation_bias                                                      0
+If_extra_hidden_sums                                                  0
+Number_of_extra_sums                                                  200
+Number_of_hidden_blocks                                               1
+
+Option_for_output_file                                                6_0.5_1.0_iTDVMC
+If_write_move_statistics                                              1
+If_write_MCMC_config                                                  1
+If_write_final_config                                                 1
+If_write_opt_obs                                                      1
+If_write_block_obs                                                    1
+If_write_opt_params                                                   1
+If_write_all_params                                                   1
+If_write_qgt_matrix                                                   1
+if_write_qgt_cond                                                     1
+If_write_QGT_eigen                                                    1

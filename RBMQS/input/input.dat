@@ -1,6 +1,6 @@
 WaveFunctionFile       	   none 
-VisibleNeurons             40 
-HiddenNeurons              40 
+VisibleNeurons             6 
+HiddenNeurons              6 
 
 modelHamiltonian           Ising1d
 magneticField              0.5
@@ -8,16 +8,16 @@ quenchField		   1.0
 
 realTime		   0 
 scalingGamma               0.01
-integrationStep		   0.001
+integrationStep		   0.01
 numberRun                  1000
 
 blocksNumber               50
 sweepsNumber               1000
 eqTimefraction             0.1
 Mfraction                  1
-spinFlippednumber          2
+spinFlippednumber          1
 
 fileState                  states.dat
 fileEnergy                 energy.dat
 fileSigma		   sigma.dat
-fileWave                   Ising1d_40_0.5_1.wf
+fileWave                   Ising1d_6_0.5.wf
