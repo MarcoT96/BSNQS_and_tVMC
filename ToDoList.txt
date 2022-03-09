@@ -1,7 +1,0 @@
-• GitHub (fatto)
-• Armadillo vs stl (fatto)
-• Sommabilità delle variabili ausiliarie con corr. n.n. (fatto)
-• Parallellizare
-• Nuovi integratori
-• Scrittura tesi (Overleaf)
-• Implementazione Shadow
