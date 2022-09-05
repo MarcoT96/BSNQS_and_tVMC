@@ -160,7 +160,7 @@ class JasNN : public WaveFunction {
     //Constructor and Destructor
     JasNN(unsigned int, bool, int);
     JasNN(std::string, bool, int);
-    ~JasNN();
+    ~JasNN() {};
 
     //Access functions
     unsigned int density() const {return 1;}
@@ -218,7 +218,7 @@ class RBM : public WaveFunction {
     //Constructor and Destructor
     RBM(unsigned int, unsigned int, bool, int);
     RBM(std::string, bool, int);
-    ~RBM();
+    ~RBM() {};
 
     //Access functions
     unsigned int density() const {return _M/_N;}
@@ -431,8 +431,7 @@ std::complex <double> WaveFunction :: alpha_at(unsigned int j) const {
   }
 
   //Check passed
-  else
-    return _alpha(j);
+  else return _alpha(j);
 
 }
 
@@ -448,8 +447,7 @@ void WaveFunction :: set_alpha_at(unsigned int j, std::complex <double> new_para
 
   }
   //Check passed
-  else
-    _alpha(j) = new_param;
+  else _alpha(j) = new_param;
 
 }
 
@@ -465,8 +463,7 @@ void WaveFunction :: set_alpha_real_at(unsigned int j, double new_param_real) {
 
   }
   //Check passed
-  else
-    _alpha(j).real(new_param_real);
+  else _alpha(j).real(new_param_real);
 
 }
 
@@ -482,8 +479,7 @@ void WaveFunction :: set_alpha_imag_at(unsigned int j, double new_param_imag) {
 
   }
   //Check passed
-  else
-    _alpha(j).imag(new_param_imag);
+  else _alpha(j).imag(new_param_imag);
 
 }
 
@@ -495,16 +491,11 @@ Mat <int> WaveFunction :: generate_config(const Mat <int>& old_config, const Mat
 
   if(flipped_site.n_elem != 0){
 
-    for(unsigned int j_row = 0; j_row < flipped_site.n_rows; j_row++)
-      new_config(0, flipped_site(j_row, 0)) *= -1;
+    for(unsigned int j_row = 0; j_row < flipped_site.n_rows; j_row++) new_config(0, flipped_site(j_row, 0)) *= -1;
     return new_config;
 
   }
-  else{
-
-    return new_config;
-
-  }
+  else return new_config;
 
 }
 /*******************************************************************************************************************************/
@@ -534,16 +525,13 @@ JasNN :: JasNN(unsigned int n_visible, bool phi_option, int rank) {
   /*########################################################################################################*/
 
   //Information
-  if(rank == 0)
-    std::cout << "#Create a nearest-neighbors Jastrow wave function with randomly initialized variational parameters 𝓥 = {𝜙, 𝜂}." << std::endl;
+  if(rank == 0) std::cout << "#Create a nearest-neighbors Jastrow wave function with randomly initialized variational parameters 𝓥 = {𝜙, 𝜂}." << std::endl;
 
   //Creates and initializes the Random Number Generator
   int seed[4];
   int p1, p2;
   std::ifstream Primes("./input_random_device/Primes");
-  if(Primes.is_open()){
-    Primes >> p1 >> p2;
-  }
+  if(Primes.is_open()) Primes >> p1 >> p2;
   else{
 
     std::cerr << " ##FileError: Unable to open Primes." << std::endl;
@@ -563,8 +551,7 @@ JasNN :: JasNN(unsigned int n_visible, bool phi_option, int rank) {
       }
     }
     input.close();
-    if(rank == 0)
-      std::cout << " Random device created correctly." << std::endl;
+    if(rank == 0) std::cout << " Random device created correctly." << std::endl;
   }
   else{
 
@@ -586,8 +573,7 @@ JasNN :: JasNN(unsigned int n_visible, bool phi_option, int rank) {
     _phi.imag(_rnd.Gauss(0.0, 0.001));
 
   }
-  else
-    _phi = 0.0;
+  else _phi = 0.0;
   _alpha(0).real(_rnd.Gauss(0.0, 0.001));
   _alpha(0).imag(_rnd.Gauss(0.0, 0.001));
 
@@ -617,8 +603,7 @@ JasNN :: JasNN(std::string file_wf, bool phi_option, int rank) {
   /*#################################################################################*/
 
   //Information
-  if(rank == 0)
-    std::cout << "#Create a nearest-neighbors Jastrow wave function from an existing quantum state." << std::endl;
+  if(rank == 0) std::cout << "#Create a nearest-neighbors Jastrow wave function from an existing quantum state." << std::endl;
 
   std::ifstream input_wf(file_wf.c_str());
   if(!input_wf.good()){
@@ -634,9 +619,7 @@ JasNN :: JasNN(std::string file_wf, bool phi_option, int rank) {
   int seed[4];
   int p1, p2;
   std::ifstream Primes("./input_random_device/Primes");
-  if(Primes.is_open()){
-    Primes >> p1 >> p2;
-  }
+  if(Primes.is_open()) Primes >> p1 >> p2;
   else{
 
     std::cerr << " ##FileError: Unable to open Primes." << std::endl;
@@ -656,8 +639,7 @@ JasNN :: JasNN(std::string file_wf, bool phi_option, int rank) {
       }
     }
     input.close();
-    if(rank == 0)
-      std::cout << " Random device created correctly." << std::endl;
+    if(rank == 0) std::cout << " Random device created correctly." << std::endl;
   }
   else{
 
@@ -706,13 +688,6 @@ JasNN :: JasNN(std::string file_wf, bool phi_option, int rank) {
 }
 
 
-JasNN :: ~JasNN() {
-
-  //_rnd.SaveSeed();
-
-}
-
-
 std::complex <double> JasNN :: logPhi(const Mat <int>& visible_config, const Mat <int>& hidden_config) const {
 
   /*####################################################*/
@@ -742,10 +717,8 @@ std::complex <double> JasNN :: logPhi(const Mat <int>& visible_config, const Mat
   for(unsigned int j = 0; j < _N; j++){
 
     //Imposing PBC
-    if(j == _N-1)
-      log_psi += double(visible_config(0, j) * visible_config(0, 0));  // 𝓋_𝖭 • 𝓋_𝟢
-    else
-      log_psi += double(visible_config(0, j) * visible_config(0, j+1));  // 𝓋𝒿 • 𝓋𝒿+𝟣
+    if(j == _N-1) log_psi += double(visible_config(0, j) * visible_config(0, 0));  // 𝓋_𝖭 • 𝓋_𝟢
+    else log_psi += double(visible_config(0, j) * visible_config(0, j+1));  // 𝓋𝒿 • 𝓋𝒿+𝟣
 
   }
 
@@ -796,8 +769,7 @@ std::complex <double> JasNN :: logPhiNew_over_PhiOld(const Mat <int>& visible_co
   }
 
   //Check on the new sampled visible configuration |𝒗ⁿᵉʷ⟩
-  if(flipped_visible_site.n_elem == 0)
-    return 0.0;  //𝑙𝑜𝑔(1) = 0, the case |𝒗ⁿᵉʷ⟩ = |𝒗ᵒˡᵈ⟩
+  if(flipped_visible_site.n_elem == 0) return 0.0;  //𝑙𝑜𝑔(1) = 0, the case |𝒗ⁿᵉʷ⟩ = |𝒗ᵒˡᵈ⟩
   else{
 
     //Check on the lattice dimensionality
@@ -818,10 +790,8 @@ std::complex <double> JasNN :: logPhiNew_over_PhiOld(const Mat <int>& visible_co
     for(unsigned int j = 0; j < _N; j++){
 
       //Imposing PBC
-      if(j == _N-1)
-        log_vv += double(new_visible_config(0, j) * new_visible_config(0, 0) - visible_config(0, j) * visible_config(0, 0));  // (𝓋_𝖭ⁿᵉʷ•𝓋_𝟢ⁿᵉʷ - 𝓋_𝖭ᵒˡᵈ•𝓋_𝟢ᵒˡᵈ)
-      else
-        log_vv += double(new_visible_config(0, j) * new_visible_config(0, j+1) - visible_config(0, j) * visible_config(0, j+1));  // (𝓋𝒿ⁿᵉʷ•𝓋𝒿+𝟣ⁿᵉʷ - 𝓋𝒿ᵒˡᵈ•𝓋𝒿+𝟣ᵒˡᵈ)
+      if(j == _N-1) log_vv += double(new_visible_config(0, j) * new_visible_config(0, 0) - visible_config(0, j) * visible_config(0, 0));  // (𝓋_𝖭ⁿᵉʷ•𝓋_𝟢ⁿᵉʷ - 𝓋_𝖭ᵒˡᵈ•𝓋_𝟢ᵒˡᵈ)
+      else log_vv += double(new_visible_config(0, j) * new_visible_config(0, j+1) - visible_config(0, j) * visible_config(0, j+1));  // (𝓋𝒿ⁿᵉʷ•𝓋𝒿+𝟣ⁿᵉʷ - 𝓋𝒿ᵒˡᵈ•𝓋𝒿+𝟣ᵒˡᵈ)
 
     }
 
@@ -917,10 +887,8 @@ void JasNN :: LocalOperators(const Mat <int>& visible_config, const Mat <int>& h
   for(unsigned int j = 0; j < _N; j++){
 
     //Imposing PBC
-    if(j == _N-1)
-      O_vv += double(visible_config(0, j) * visible_config(0, 0));  // 𝓋_𝖭 • 𝓋_𝟢
-    else
-      O_vv += double(visible_config(0, j) * visible_config(0, j+1));  // 𝓋𝒿 • 𝓋𝒿+𝟣
+    if(j == _N-1) O_vv += double(visible_config(0, j) * visible_config(0, 0));  // 𝓋_𝖭 • 𝓋_𝟢
+    else O_vv += double(visible_config(0, j) * visible_config(0, j+1));  // 𝓋𝒿 • 𝓋𝒿+𝟣
 
   }
 
@@ -956,16 +924,13 @@ RBM :: RBM(unsigned int n_visible, unsigned int density, bool phi_option, int ra
   /*################################################################################*/
 
   //Information
-  if(rank == 0)
-    std::cout << "#Create a RBM wave function with randomly initialized variational parameters 𝛂 = {𝐚,𝐛,𝕎 }." << std::endl;
+  if(rank == 0) std::cout << "#Create a RBM wave function with randomly initialized variational parameters 𝛂 = {𝐚,𝐛,𝕎 }." << std::endl;
 
   //Creates and initializes the Random Number Generator
   int seed[4];
   int p1, p2;
   std::ifstream Primes("./input_random_device/Primes");
-  if(Primes.is_open()){
-    Primes >> p1 >> p2;
-  }
+  if(Primes.is_open()) Primes >> p1 >> p2;
   else{
 
     std::cerr << " ##FileError: Unable to open Primes." << std::endl;
@@ -985,8 +950,7 @@ RBM :: RBM(unsigned int n_visible, unsigned int density, bool phi_option, int ra
       }
     }
     input.close();
-    if(rank == 0)
-    std::cout << " Random device created correctly." << std::endl;
+    if(rank == 0) std::cout << " Random device created correctly." << std::endl;
   }
   else{
 
@@ -1004,8 +968,7 @@ RBM :: RBM(unsigned int n_visible, unsigned int density, bool phi_option, int ra
     _phi.imag(_rnd.Gauss(0.0, 0.001));
 
   }
-  else
-    _phi = 0.0;
+  else _phi = 0.0;
   _type = "Neural Network";
   _N = n_visible;
   _alpha.set_size(_N + _M + _N * _M);
@@ -1013,12 +976,10 @@ RBM :: RBM(unsigned int n_visible, unsigned int density, bool phi_option, int ra
   _Theta.set_size(_M);
 
   //Visible bias
-  for(unsigned int j = 0; j < _N; j++)
-    _alpha(j) = 0.0;  // 𝛼ⱼ ≡ 𝑎ⱼ
+  for(unsigned int j = 0; j < _N; j++) _alpha(j) = 0.0;  // 𝛼ⱼ ≡ 𝑎ⱼ
 
   //Hidden bias
-  for(unsigned int k = _N; k < _N + _M; k++)
-    _alpha(k) = 0.0;  // 𝛼ₖ ≡ 𝑏ₖ
+  for(unsigned int k = _N; k < _N + _M; k++) _alpha(k) = 0.0;  // 𝛼ₖ ≡ 𝑏ₖ
 
   //Visible-hidden interaction weights
   for(unsigned int jk = _N + _M; jk < _alpha.n_elem; jk++){
@@ -1056,8 +1017,7 @@ RBM :: RBM(std::string file_wf, bool phi_option, int rank)
   /*##############################################################*/
 
   //Information
-  if(rank == 0)
-    std::cout << "#Create a RBM wave function from an existing quantum state." << std::endl;
+  if(rank == 0) std::cout << "#Create a RBM wave function from an existing quantum state." << std::endl;
 
   std::ifstream input_wf(file_wf.c_str());
   if(!input_wf.good()){
@@ -1073,9 +1033,7 @@ RBM :: RBM(std::string file_wf, bool phi_option, int rank)
   int seed[4];
   int p1, p2;
   std::ifstream Primes("./input_random_device/Primes");
-  if(Primes.is_open()){
-    Primes >> p1 >> p2;
-  }
+  if(Primes.is_open()) Primes >> p1 >> p2;
   else{
 
     std::cerr << " ##FileError: Unable to open Primes." << std::endl;
@@ -1095,8 +1053,7 @@ RBM :: RBM(std::string file_wf, bool phi_option, int rank)
       }
     }
     input.close();
-    if(rank == 0)
-      std::cout << " Random device created correctly." << std::endl;
+    if(rank == 0) std::cout << " Random device created correctly." << std::endl;
   }
   else{
 
@@ -1131,8 +1088,7 @@ RBM :: RBM(std::string file_wf, bool phi_option, int rank)
     std::abort();
 
   }
-  for(unsigned int p = 0; p <_alpha.n_elem; p++)
-    input_wf >> _alpha(p);
+  for(unsigned int p = 0; p <_alpha.n_elem; p++) input_wf >> _alpha(p);
 
   if(input_wf.good()){
 
@@ -1151,13 +1107,6 @@ RBM :: RBM(std::string file_wf, bool phi_option, int rank)
 }
 
 
-RBM :: ~RBM() {
-
-  //_rnd.SaveSeed();
-
-}
-
-
 std::complex <double> RBM :: a_j(unsigned int j) const {
 
   //Check on the choosen index: the first element has index 0 in C++
@@ -1169,8 +1118,7 @@ std::complex <double> RBM :: a_j(unsigned int j) const {
 
   }
   //Check passed
-  else
-    return _alpha(j);
+  else return _alpha(j);
 
 }
 
@@ -1186,8 +1134,7 @@ std::complex <double> RBM :: b_k(unsigned int k) const {
 
   }
   //Check passed
-  else
-    return _alpha(_N + k);
+  else return _alpha(_N + k);
 
 }
 
@@ -1203,8 +1150,7 @@ std::complex <double> RBM :: W_jk(unsigned int j, unsigned int k) const {
 
   }
   //Check passed
-  else
-    return _alpha(_N + _M + j * _M + k);
+  else return _alpha(_N + _M + j * _M + k);
 
 }
 
@@ -1220,8 +1166,7 @@ std::complex <double> RBM :: Theta_k(unsigned int k) const {
 
   }
   //Check passed
-  else
-    return _Theta(k);
+  else return _Theta(k);
 
 }
 
@@ -1234,10 +1179,8 @@ void RBM :: print_a() const {
   for(unsigned int j = 0; j < _N; j++){
 
     std::cout << _alpha(j).real();
-    if(_alpha(j).imag() >= 0)
-      std::cout << " + i" << _alpha(j).imag() << "  " << std::endl;
-    else
-      std::cout << " - i" << -1.0 * _alpha(j).imag() << "  " << std::endl;
+    if(_alpha(j).imag() >= 0) std::cout << " + i" << _alpha(j).imag() << "  " << std::endl;
+    else std::cout << " - i" << -1.0 * _alpha(j).imag() << "  " << std::endl;
 
   }
 
@@ -1252,10 +1195,8 @@ void RBM :: print_b() const {
   for(unsigned int k = 0; k < _M; k++){
 
     std::cout << _alpha(_N + k).real();
-    if(_alpha(_N + k).imag() >= 0)
-      std::cout << " + i" << _alpha(_N + k).imag() << "  " << std::endl;
-    else
-      std::cout << " - i" << -1.0 * _alpha(_N + k).imag() << "  " << std::endl;
+    if(_alpha(_N + k).imag() >= 0) std::cout << " + i" << _alpha(_N + k).imag() << "  " << std::endl;
+    else std::cout << " - i" << -1.0 * _alpha(_N + k).imag() << "  " << std::endl;
 
   }
 
@@ -1272,10 +1213,8 @@ void RBM :: print_W() const {
     for(unsigned int k = 0; k < _M; k++){
 
       std::cout << _alpha(_N + _M + j * _M + k).real();
-      if(_alpha(_N + _M + j * _M + k).imag() >= 0)
-        std::cout << " + i" << _alpha(_N + _M + j * _M + k).imag() << "  ";
-      else
-        std::cout << " - i" << -1.0 * _alpha(_N + _M + j * _M + k).imag() << "  ";
+      if(_alpha(_N + _M + j * _M + k).imag() >= 0) std::cout << " + i" << _alpha(_N + _M + j * _M + k).imag() << "  ";
+      else std::cout << " - i" << -1.0 * _alpha(_N + _M + j * _M + k).imag() << "  ";
 
     }
     std::cout << std::endl;
@@ -1293,10 +1232,8 @@ void RBM :: print_Theta() const {
   for(unsigned int k = 0; k < _Theta.n_elem; k++){
 
     std::cout << _Theta(k).real();
-    if(_Theta(k).imag() >= 0)
-      std::cout << " + i" << _Theta(k).imag() << std::endl;
-    else
-      std::cout << " + i" << -1.0 * _Theta(k).imag() << std::endl;
+    if(_Theta(k).imag() >= 0) std::cout << " + i" << _Theta(k).imag() << std::endl;
+    else std::cout << " + i" << -1.0 * _Theta(k).imag() << std::endl;
 
   }
 
@@ -1331,10 +1268,8 @@ double RBM :: lncosh(double x) const {
   //
   /*###########################################################*/
 
-  if(x < 6.0)
-    return std::log(std::cosh(x));
-  else
-    return x - _ln2;
+  if(x < 6.0) return std::log(std::cosh(x));
+  else return x - _ln2;
 
 }
 
@@ -1483,8 +1418,7 @@ void RBM :: Update_Theta(const Mat <int>& visible_config, const Mat <int>& flipp
   }
 
   //Check on the new sampled visible configuration |𝒗ⁿᵉʷ⟩
-  if(flipped_visible_site.n_elem == 0)
-    return;
+  if(flipped_visible_site.n_elem == 0) return;
   else{
 
     //Check on the lattice dimensionality
@@ -1586,7 +1520,7 @@ std::complex <double> RBM :: logPhi(const Mat <int>& visible_config, const Mat <
 
   }
 
-  return log_vv + _M * _ln2;
+  return this -> phi() + log_vv + _M * _ln2;
 
 }
 
@@ -1632,8 +1566,7 @@ std::complex <double> RBM :: logPhiNew_over_PhiOld(const Mat <int>& visible_conf
   }
 
   //Check on the new sampled visible configuration |𝒗ⁿᵉʷ⟩
-  if(flipped_visible_site.n_elem == 0)
-    return 0.0;  //𝑙𝑜𝑔(1) = 0, the case |𝒗ⁿᵉʷ⟩ = |𝒗ᵒˡᵈ⟩
+  if(flipped_visible_site.n_elem == 0) return 0.0;  //𝑙𝑜𝑔(1) = 0, the case |𝒗ⁿᵉʷ⟩ = |𝒗ᵒˡᵈ⟩
   else{
 
     //Check on the lattice dimensionality
@@ -1809,8 +1742,7 @@ void RBM :: LocalOperators(const Mat <int>& visible_config, const Mat <int>& hid
   }
 
   //Local operators for the hidden bias 𝐛
-  for(unsigned int k = 0; k < _M; k++)
-    _LocalOperators(_N + k, 0) = std::tanh(_Theta(k));
+  for(unsigned int k = 0; k < _M; k++) _LocalOperators(_N + k, 0) = std::tanh(_Theta(k));
 
   //Local operators for the visible-hidden interaction strength 𝕎
   for(unsigned int m_row = 0; m_row < visible_config.n_rows; m_row++){

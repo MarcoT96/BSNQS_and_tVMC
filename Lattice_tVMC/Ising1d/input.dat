@@ -1,0 +1,50 @@
+NUMBER_OF_SPINS                                                       6
+SHADOWS_DENSITY                                                       1
+if_GLOBAL_PHASE                                                       1
+if_ZERO_IMAGINARY_PART                                                0
+
+SPIN-SPIN_INTERACTION                                                 1.0
+MAGNETIC_FIELD                                                        0.5
+
+if_VMC                                                                0
+if_IMAGINARY-TIME_DYNAMICS                                            1
+if_REAL-TIME_DYNAMICS                                                 0
+QGT_REGULARIZATION_METHOD                                             1
+QGT_REGULARIZATION_CONTROL_PARAMETER_VALUE_1                          1E-4
+QGT_REGULARIZATION_CONTROL_PARAMETER_VALUE_2                          1E-8
+INTEGRATION_TIME-STEP                                                 0.01
+NUMBER_OF_TIME-STEPS                                                  10
+
+NUMBER_OF_BLOCKS                                                      25
+NUMBER_OF_MC_STEPS_PER_PROCESS                                        500
+NUMBER_OF_M_INITIAL_EQUILIBRATION_STEPS_PER_PROCESS                   5000
+NUMBER_OF_MC_EQUILIBRATION_STEPS_IN_EACH_MCMC                         20
+NUMBER_OF_SPIN_BUNCHES                                                6
+DIMENSION_OF_A_SPIN_BUNCH                                             1
+EQUAL_SITE_MOVE_PROBABILITY                                           0
+REAL_N.N._MOVE_PROBABILITY                                            0
+SHADOW_N.N._MOVE_PROBABILITY                                          0
+GLOBAL_KET_FLIP_PROBABILITY                                           1
+GLOBAL_BRA_FLIP_PROBABILITY                                           1
+if_RESTART_FROM_CONFIG                                                1
+if_SHADOWS_OFF                                                        0
+if_EXTRA_SHADOW_SUMS                                                  1
+NUMBER_OF_EXTRA_SHADOW_SUMS                                           500
+NUMBER_OF_SHADOW_BLOCKS                                               1
+
+OUTPUT_FILE_INFO                                                      PROVA
+if_write_MOVE_STATISTICS                                              1
+if_write_MCMC_CONFIG                                                  0
+if_write_FINAL_CONFIG                                                 0
+if_write_ENERGY_ALL                                                   0
+if_measure_ENERGY                                                     0
+if_measure_NON-DIAGONAL_OBSERVABLES                                   0
+if_measure_DIAGONAL_OBSERVABLES                                       0
+if_measure_BLOCK_ENERGY                                               0
+if_measure_BLOCK_NON-DIAGONAL_OBSERVABLES                             0
+if_measure_BLOCK_DIAGONAL_OBSERVABLES                                 0
+if_write_OPT_VQS                                                      0
+if_write_VQS_EVOLUTION                                                0
+if_write_QGT                                                          0
+if_write_QGT_CONDITION_NUMBER                                         0
+if_write_QGT_EIGENVALUES                                              0

@@ -47,46 +47,47 @@ void PrintInfo(int rank){  //Print informations for command line instructions
 
   if(rank == 0){
 
-    std::cout << "\nTo execute the main code: mpirun -np N ./main.exe OPTIONS" << std::endl;
+    std::cout << "\n** To execute the main code: mpirun -np N ./main.exe OPTIONS **" << std::endl;
     std::cout << "  ================" << std::endl;
     std::cout << "  Allowed OPTIONS" << std::endl;
     std::cout << "  ================" << std::endl << std::endl;
 
     std::cout << "\t • N" << std::endl;
-    std::cout << "\t\t * Number of processes involved in the parallel execution of the code with openMPI" << std::endl;
+    std::cout << "\t\t * Number of processes involved in the parallel execution of the code with MPICH." << std::endl;
 
     std::cout << "\t • --filename=..." << std::endl;
-    std::cout << "\t\t * Name of the file containing initial variational parameters for the Variational Quantum State" <<std::endl;
-    std::cout << "\t\t * Choose the file in the appropriate quantum model directory and sub-directory GroundState/ or Dynamics/" << std::endl;
-    std::cout << "\t\t * Default filename is 'None'" << std::endl;
+    std::cout << "\t\t * Name of the file containing initial conditions for the variational parameters defining the Variational Quantum State." <<std::endl;
+    std::cout << "\t\t * Choose the file in the appropriate quantum model directory and sub-directory GroundState/ or Dynamics/ or input folder." << std::endl;
+    std::cout << "\t\t * Default filename is 'None'." << std::endl;
 
     std::cout << "\t • --model=..." << std::endl;
-    std::cout << "\t\t * Name of the Quantum model to be simulated" <<std::endl;
+    std::cout << "\t\t * Name of the Quantum model to be simulated." <<std::endl;
     std::cout << "\t\t * Quantum models available at the moment:" << std::endl;
-    std::cout << "\t\t\t ** Transverse Field Ising Model in 1d (enter Ising1d)" << std::endl;
-    std::cout << "\t\t\t ** Heisenberg Model in 1d (enter Heisenberg1d)" << std::endl;
-    std::cout << "\t\t * Default model is the 1d Ising model" << std::endl << std::endl;
+    std::cout << "\t\t\t ** Transverse Field Ising Model in 𝗱 = 𝟏 (enter Ising1d);" << std::endl;
+    std::cout << "\t\t\t ** Heisenberg Model in 𝗱 = 𝟏 (enter Heisenberg1d);" << std::endl;
+    std::cout << "\t\t * Default model is the quantum Ising model in 𝗱 = 𝟏." << std::endl << std::endl;
 
     std::cout << "\t • --ansatz=..." << std::endl;
-    std::cout << "\t\t * Name of the type of variational ansatz to be used in the VMC" <<std::endl;
+    std::cout << "\t\t * Name of the type of variational Ansatz to be used in the VMC algorithm." <<std::endl;
     std::cout << "\t\t * Variational wavefunction available at the moment:" << std::endl;
-    std::cout << "\t\t\t ** Nearest-neighbors Jastrow (enter JasNN)" << std::endl;
-    std::cout << "\t\t\t ** Restricted Boltzmann Machine Neural Network (enter RBM)" << std::endl;
-    std::cout << "\t\t\t ** (quasi)-unRestricted Boltzmann Machine Shadow Ansatz in 𝗱 = 𝟏 (enter uRBM)" << std::endl;
-    std::cout << "\t\t\t ** Baeriswyl-Shadow Ansatz in 𝗱 = 𝟏 (enter BS_NNQS)" << std::endl;
-    std::cout << "\t\t * Default ansatz is the nearest-neighbors Jastrow wave function" << std::endl << std::endl;
+    std::cout << "\t\t\t ** Nearest-neighbors Jastrow Ansatz (enter JasNN);" << std::endl;
+    std::cout << "\t\t\t ** Restricted Boltzmann Machine Neural Network (enter RBM);" << std::endl;
+    std::cout << "\t\t\t ** Baeriswyl-Shadow Ansatz in 𝗱 = 𝟏 (enter BSWF);" << std::endl;
+    std::cout << "\t\t\t ** Shadow Ansatz with next-nearest-neighbors shadow correlations in 𝗱 = 𝟏 (enter SWF_NNN);" << std::endl;
+    std::cout << "\t\t\t ** (quasi)-unRestricted Boltzmann Machine Shadow Ansatz in 𝗱 = 𝟏 (enter uRBM);" << std::endl;
+    std::cout << "\t\t * Default Ansatz is the nearest-neighbors Jastrow wave function." << std::endl << std::endl;
 
     std::cout << "\t • --input=..." << std::endl;
-    std::cout << "\t\t * Name of the file containing the input simulation hyper-parameters" <<std::endl;
-    std::cout << "\t\t * Choose the file in the appropriate quantum model directory" << std::endl << std::endl;
+    std::cout << "\t\t * Name of the file containing the input simulation hyper-parameters." <<std::endl;
+    std::cout << "\t\t * Choose the file in the appropriate quantum model directory." << std::endl << std::endl;
 
     std::cout << "\t • --integrator=..." << std::endl;
-    std::cout << "\t\t * Name of the ODE integrator to be used to solving the variational parameters equations of motion" <<std::endl;
+    std::cout << "\t\t * Name of the ODE integrator to be used to solving the variational parameters equations of motion." <<std::endl;
     std::cout << "\t\t * ODE integrators available at the moment:" << std::endl;
-    std::cout << "\t\t\t ** Euler method (enter Euler)" << std::endl;
-    std::cout << "\t\t\t ** Heun method (enter Heun)" << std::endl;
-    std::cout << "\t\t\t ** Fourth order Runge Kutta method (enter RK4)" << std::endl;
-    std::cout << "\t\t * Default integrator is the Euler method" << std::endl << std::endl;
+    std::cout << "\t\t\t ** Euler method (enter Euler);" << std::endl;
+    std::cout << "\t\t\t ** Heun method (enter Heun);" << std::endl;
+    std::cout << "\t\t\t ** Fourth order Runge Kutta method (enter RK4);" << std::endl;
+    std::cout << "\t\t * Default integrator is the Euler method." << std::endl << std::endl;
 
   }
 
@@ -140,7 +141,7 @@ std::map <std::string, std::string> setOptions(int argc, char* argv[], int rank)
       case 'a':
         options["filename"] = optarg;
         if(std::string(optarg) != "None")
-          if(rank == 0) std::cout << " Initial wave function variational parameters uploaded from file " << std::string(optarg) << std::endl;
+          if(rank == 0) std::cout << " Initial condition for the wave function variational parameters uploaded from file " << std::string(optarg) << std::endl;
         break;
 
       case 'b':
@@ -150,7 +151,7 @@ std::map <std::string, std::string> setOptions(int argc, char* argv[], int rank)
 
       case 'c':
         options["ansatz"] = optarg;
-        if(rank == 0) std::cout << " Type of variational wave function ansatz: " << std::string(optarg) << std::endl;
+        if(rank == 0) std::cout << " Type of variational wave function: " << std::string(optarg) << std::endl;
         break;
 
       case 'd':
@@ -160,7 +161,7 @@ std::map <std::string, std::string> setOptions(int argc, char* argv[], int rank)
 
       case 'e':
         options["integrator"] = optarg;
-        if(rank == 0) std::cout << " ODE integrator for the TDVMC equations of motion: " << std::string(optarg) << std::endl;
+        if(rank == 0) std::cout << " ODE integrator for the 𝐭𝐕𝐌𝐂 equations of motion: " << std::string(optarg) << std::endl;
         break;
 
       case '?':  //Unrecognize option

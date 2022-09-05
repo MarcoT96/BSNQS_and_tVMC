@@ -9,13 +9,13 @@ Final_magnetic_field                                                  0.0
 If_vmc                                                                0
 If_imaginary_time_dynamics                                            1
 If_real_time_dynamics                                                 0
-If_QGT_regularization                                                 0
+If_QGT_regularization                                                 0.0001
 QGT_regularization_method                                             0
 Integration_step_parameter                                            0.0025
-Number_of_optimization_steps                                          2000
+Number_of_optimization_steps                                          100
 
-Number_of_blocks                                                      625
-Number_of_MC_sweeps_per_process                                       12500
+Number_of_blocks                                                      25
+Number_of_MC_sweeps_per_process                                       500
 Number_of_initial_MC_equilibration_steps_per_process                  1000
 Number_of_MC_equilibration_steps                                      0
 Number_of_bunch_of_spin                                               6
@@ -25,11 +25,11 @@ Visible_n.n._move_probability                                         0.00
 Hidden_n.n._move_probability                                          0.00
 If_restart_from_config                                                1
 If_hidden_off                                                         0
-If_extra_hidden_sums                                                  0
-Number_of_extra_sums                                                  500
+If_extra_hidden_sums                                                  1
+Number_of_extra_sums                                                  1000
 Number_of_hidden_blocks                                               1
 
-Option_for_output_file                                                6_0.4_JWF_itVMC 
+Option_for_output_file                                                SWF_NNN_itVMC 
 If_write_move_statistics                                              1
 If_write_MCMC_config                                                  1
 If_write_final_config                                                 1

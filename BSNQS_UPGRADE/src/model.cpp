@@ -85,20 +85,10 @@ class SpinHamiltonian {
     inline unsigned int dimensionality() const {return _LatticeDim;}  //Returns the lattice dimensionality 𝖽
     inline bool if_pbc() const {return _pbc;}  //Returns true if periodic boundary conditions are used on the system
     inline std::complex <double> i() const {return _i;}  //Returns the value of the imaginary unit
+
+    //Useful for debugging
     inline field <Row <std::complex <double>>> get_connections() const {return _Connections;}  //Returns the list of connections
     inline field <field <Mat <int>>> all_state_prime() const {return _StatePrime;}  //Returns all the |𝒮'⟩ connected to the current configuration |𝒮⟩ of the system
-    inline Row <std::complex <double>> EnergyConn() const {return _Connections(0);}  //Returns the list of connections related to ⟨Ĥ⟩
-    inline Row <std::complex <double>> SxConn() const {return _Connections(1);}  //Returns the list of connections related to ⟨σ̂ˣ⟩
-    inline Row <std::complex <double>> SyConn() const {return _Connections(2);}  //Returns the list of connections related to ⟨σ̂ʸ⟩
-    inline Row <std::complex <double>> SzConn() const {return _Connections(3);}  //Returns the list of connections related to ⟨σ̂ᶻ⟩
-    /*
-    inline Row <std::complex <double>> SxSxConn() const {return _Connections(4);}  //Returns the list of connections related to ⟨σ̂ˣσ̂ˣ⟩
-    inline Row <std::complex <double>> SySyConn() const {return _Connections(5);}  //Returns the list of connections related to ⟨σ̂ʸσ̂ʸ⟩
-    inline Row <std::complex <double>> SzSzConn() const {return _Connections(6);}  //Returns the list of connections related to ⟨σ̂ᶻσ̂ᶻ⟩
-    inline Row <std::complex <double>> SxSyConn() const {return _Connections(7);}  //Returns the list of connections related to ⟨σ̂ˣσ̂ʸ⟩
-    inline Row <std::complex <double>> SxSzConn() const {return _Connections(8);}  //Returns the list of connections related to ⟨σ̂ˣσ̂ᶻ⟩
-    inline Row <std::complex <double>> SySzConn() const {return _Connections(9);}  //Returns the list of connections related to ⟨σ̂ʸσ̂ᶻ⟩
-    */
 
 };
 
@@ -185,15 +175,6 @@ Ising1d :: Ising1d(unsigned int n_spin, double h_field, int rank, double j, bool
   //
   //        _Connections(0) ‹--›  ⟨𝒮|  Ĥ  |𝒮'⟩
   //        _Connections(1) ‹--›  ⟨𝒮|  σ̂ˣ |𝒮'⟩
-  //        _Connections(2) ‹--›  ⟨𝒮|  σ̂ʸ |𝒮'⟩
-  //        _Connections(3) ‹--›  ⟨𝒮|  σ̂ᶻ |𝒮'⟩
-  //        _Connections(4) ‹--›  ⟨𝒮| σ̂ˣσ̂ˣ |𝒮'⟩
-  //        _Connections(5) ‹--›  ⟨𝒮| σ̂ʸσ̂ʸ |𝒮'⟩
-  //        _Connections(6) ‹--›  ⟨𝒮| σ̂ᶻσ̂ᶻ |𝒮'⟩
-  //        _Connections(7) ‹--›  ⟨𝒮| σ̂ˣσ̂ʸ |𝒮'⟩
-  //        _Connections(8) ‹--›  ⟨𝒮| σ̂ˣσ̂ᶻ |𝒮'⟩
-  //        _Connections(9) ‹--›  ⟨𝒮| σ̂ʸσ̂ᶻ |𝒮'⟩
-  //
   //
   //  N̲O̲T̲E̲: we find instructive to explain the procedure that leads to the determination
   //        of the connections and of the configurations set |𝒮'⟩ for the quantum average of
@@ -291,55 +272,42 @@ Ising1d :: Ising1d(unsigned int n_spin, double h_field, int rank, double j, bool
 
   //Data-members initialization
   _LatticeDim = 1;  //𝟏𝐝 Quantum Chain
-  _Connections.set_size(4, 1);
-  _StatePrime.set_size(4, 1);
-  _StatePrime(0, 0).set_size(1, _Nspin+1);  //List of |𝒮'⟩ for the energy
-  _StatePrime(1, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ˣ
-  _StatePrime(2, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ʸ
-  _StatePrime(3, 0).set_size(1, 1);  //List of |𝒮'⟩ for σ̂ᶻ
+  _Connections.set_size(2, 1);
+  _StatePrime.set_size(2, 1);
+  _StatePrime.at(0, 0).set_size(1, _Nspin+1);  //List of |𝒮'⟩ for the energy
+  _StatePrime.at(1, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ˣ
 
   //Function variables
   Row <std::complex <double>> energy_conn(_Nspin+1, fill::zeros);  //The first element corresponds to the case |𝒮'⟩ = |𝒮⟩
   Row <std::complex <double>> sigmax_conn(_Nspin, fill::zeros);  //Storage variable
 
   //Pre-computed connections and associated |𝒮'⟩ definitions for ⟨𝒮| Ĥ |𝒮'⟩
-  _StatePrime(0, 0)(0, 0).reset();  //empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, diagonal term
-  for(unsigned int j_flipped=1; j_flipped<_Nspin+1; j_flipped++){
+  _StatePrime.at(0, 0).at(0, 0).reset();  //empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, diagonal term
+  for(unsigned int j_flipped = 1; j_flipped < _Nspin+1; j_flipped++){
 
-    _StatePrime(0, 0)(0, j_flipped).set_size(1, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped-1
-    _StatePrime(0, 0)(0, j_flipped)(0, 0) = j_flipped-1;
-    energy_conn(j_flipped) = -_h;  //non-diagonal term
+    _StatePrime.at(0, 0).at(0, j_flipped).set_size(1, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped-1
+    _StatePrime.at(0, 0).at(0, j_flipped).at(0, 0) = j_flipped - 1;
+    energy_conn[j_flipped] = -_h;  //non-diagonal term
 
   }
-  _Connections(0, 0) = energy_conn;
+  _Connections.at(0, 0) = energy_conn;
 
   //Pre-computed connections and associated |𝒮'⟩ definitions for ⟨𝒮| σ̂ⱼ |𝒮'⟩
-  for(unsigned int j_flipped=0; j_flipped<_Nspin; j_flipped++){
+  for(unsigned int j_flipped = 0; j_flipped < _Nspin; j_flipped++){
 
-    _StatePrime(1, 0)(0, j_flipped).set_size(1, 1);  //σ̂ˣ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
-    _StatePrime(1, 0)(0, j_flipped)(0, 0) = j_flipped;
-    sigmax_conn(j_flipped) = 1.0;  //only non-diagonal term
-
-    _StatePrime(2, 0)(0, j_flipped).set_size(1, 1);  //σ̂ʸ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
-    _StatePrime(2, 0)(0, j_flipped)(0, 0) = j_flipped;
+    _StatePrime.at(1, 0).at(0, j_flipped).set_size(1, 1);  //σ̂ˣ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
+    _StatePrime.at(1, 0).at(0, j_flipped).at(0, 0) = j_flipped;
+    sigmax_conn[j_flipped] = 1.0;  //only non-diagonal term
 
   }
-  _StatePrime(3, 0)(0, 0).reset();  //σ̂ᶻ, empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, only diagonal term
-  _Connections(1, 0) = sigmax_conn;
-
-  //Pre-computed connections and associated |𝒮'⟩ definitions for ⟨𝒮| σ̂ⱼσ̂ₖ |𝒮'⟩
-  /*
-    ..........
-    ..........
-    ..........
-  */
+  _Connections.at(1, 0) = sigmax_conn;
 
   //Indicates the created model
   if(rank == 0){
 
-    std::cout << " Transverse Field Ising model in 𝐝 = 𝟏 with " << _Nspin << " Quantum spins in h = " << _h << " magnetic field." << std::endl;
+    std::cout << " Transverse Field Ising model in 𝐝 = 𝟏 with " << _Nspin << " quantum spins in 𝙝 = " << _h << " magnetic field." << std::endl;
     std::cout << " Coupling constant of the TFI model:" << std::endl;
-    std::cout << " \tJ = " << _J << std::endl << std::endl;
+    std::cout << " \t𝙅 = " << _J << std::endl << std::endl;
 
   }
 
@@ -359,7 +327,7 @@ void Ising1d :: Quench(double hf) {
   _h = hf;
 
   //Recalculate necessary pre-computed connections
-  for(unsigned int mel=0; mel<_Nspin; mel++) _Connections(0, 0)(mel+1) = -_h;
+  for(unsigned int mel=0; mel<_Nspin; mel++) _Connections.at(0, 0)[mel+1] = -_h;
 
 }
 
@@ -368,7 +336,7 @@ void Ising1d :: FindConn(const Mat <int>& current_config, field <field <Mat <int
 
   /*###################################################################################*/
   //  Finds the non-zero matrix elements of the spin observables
-  //  on a given sampled spin configuration |𝒮⟩ named 𝐜𝐮𝐫𝐫𝐞𝐧𝐭_𝐬𝐭𝐚𝐭𝐞.
+  //  on a given sampled spin configuration |𝒮⟩ named 𝐜𝐮𝐫𝐫𝐞𝐧𝐭_𝐜𝐨𝐧𝐟𝐢𝐠.
   //  In particular it searches all the |𝒮'⟩ such that
   //
   //        ⟨𝒮| Ô |𝒮'⟩ ≠ 𝟢
@@ -396,22 +364,10 @@ void Ising1d :: FindConn(const Mat <int>& current_config, field <field <Mat <int
   state_prime = _StatePrime;
 
   //Computing σ̂ᶻ-σ̂ᶻ interaction part for the local energy
-  connections(0, 0)(0) = 0.0;
-  for(unsigned int j = 0; j < (_Nspin-1); j++) connections(0, 0)(0) += double(current_config(0, j) * current_config(0, j+1));
-  if(_pbc) connections(0, 0)(0) += double(current_config(0, _Nspin-1) * current_config(0, 0));
-  connections(0, 0)(0) *= -_J;
-
-  //Computing the other connections
-  Row <std::complex <double>> sigmay_conn(_Nspin, fill::zeros);
-  Row <std::complex <double>> sigmaz_conn(1, fill::zeros);
-  for(unsigned int j = 0; j < _Nspin; j++){
-
-    sigmay_conn(j) = _i * double(current_config(0, j));
-    sigmaz_conn(0) += double(current_config(0, j));
-
-  }
-  connections(2, 0) = sigmay_conn;
-  connections(3, 0) = sigmaz_conn;
+  connections.at(0, 0)[0] = 0.0;
+  for(unsigned int j = 0; j < (_Nspin - 1); j++) connections.at(0, 0)[0] += double(current_config.at(0, j) * current_config.at(0, j+1));
+  if(_pbc) connections.at(0, 0)[0] += double(current_config.at(0, _Nspin - 1) * current_config.at(0, 0));
+  connections.at(0, 0)[0] *= -_J;
 
 }
 /*******************************************************************************************************************************/
@@ -449,14 +405,6 @@ Heisenberg1d :: Heisenberg1d(unsigned int n_spin, int rank, double h_field, doub
   //
   //        _Connections(0) ‹--›  ⟨𝒮|  Ĥ  |𝒮'⟩
   //        _Connections(1) ‹--›  ⟨𝒮 |  σ̂ˣ |𝒮'⟩
-  //        _Connections(2) ‹--›  ⟨𝒮 |  σ̂ʸ |𝒮'⟩
-  //        _Connections(3) ‹--›  ⟨𝒮 |  σ̂ᶻ |𝒮'⟩
-  //        _Connections(4) ‹--›  ⟨𝒮 | σ̂ˣσ̂ˣ |𝒮'⟩
-  //        _Connections(5) ‹--›  ⟨𝒮 | σ̂ʸσ̂ʸ |𝒮'⟩
-  //        _Connections(6) ‹--›  ⟨𝒮 | σ̂ᶻσ̂ᶻ |𝒮'⟩
-  //        _Connections(7) ‹--›  ⟨𝒮 | σ̂ˣσ̂ʸ |𝒮'⟩
-  //        _Connections(8) ‹--›  ⟨𝒮 | σ̂ˣσ̂ᶻ |𝒮'⟩
-  //        _Connections(9) ‹--›  ⟨𝒮 | σ̂ʸσ̂ᶻ |𝒮'⟩
   //
   //  The considerations relating to the non-zero matrix elements for these observables
   //  are analogous to the previous model, but in this case even the primate configurations
@@ -468,82 +416,69 @@ Heisenberg1d :: Heisenberg1d(unsigned int n_spin, int rank, double h_field, doub
 
   //Data-members initialization
   _LatticeDim = 1;  //𝟏𝐝 Quantum Chain
-  _Connections.set_size(4, 1);
-  _StatePrime.set_size(4, 1);
+  _Connections.set_size(2, 1);
+  _StatePrime.set_size(2, 1);
 
   //Function variables
   Row <std::complex <double>> energy_conn;  //Storage variable
 
   if(_pbc){
 
-    _StatePrime(0, 0).set_size(1, _Nspin+1);  //List of |𝒮'⟩ for the energy
+    _StatePrime.at(0, 0).set_size(1, _Nspin+1);  //List of |𝒮'⟩ for the energy
     energy_conn.set_size(_Nspin+1);  //The first element corresponds to the case |𝒮'⟩ = |𝒮⟩
 
   }
   else{
 
-    _StatePrime(0, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for the energy
+    _StatePrime.at(0, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for the energy
     energy_conn.set_size(_Nspin);  //The first element corresponds to the case |𝒮'⟩ = |𝒮⟩
 
   }
-  _StatePrime(1, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ˣ
-  _StatePrime(2, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ʸ
-  _StatePrime(3, 0).set_size(1, 1);  //List of |𝒮'⟩ for σ̂ᶻ
+  _StatePrime.at(1, 0).set_size(1, _Nspin);  //List of |𝒮'⟩ for σ̂ˣ
   Row <std::complex <double>> sigmax_conn(_Nspin, fill::zeros);
 
   //Pre-computed connections and associated |𝒮'⟩ definitions for ⟨𝒮| Ĥ |𝒮'⟩
-  _StatePrime(0, 0)(0, 0).reset();  //empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, diagonal term
-  for(unsigned int j_flipped=1; j_flipped<_Nspin; j_flipped++){
+  _StatePrime.at(0, 0).at(0, 0).reset();  //empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, diagonal term
+  for(unsigned int j_flipped = 1; j_flipped < _Nspin; j_flipped++){
 
-    _StatePrime(0, 0)(0, j_flipped).set_size(2, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to two adjacent flipped spin at lattice site j_flipped-1 & j_flipped
-    _StatePrime(0, 0)(0, j_flipped)(0, 0) = j_flipped-1;
-    _StatePrime(0, 0)(0, j_flipped)(1, 0) = j_flipped;
-    energy_conn(j_flipped) = -_Jx;  //non-diagonal term related to the σ̂ˣ-σ̂ˣ exchange interaction
+    _StatePrime.at(0, 0).at(0, j_flipped).set_size(2, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to two adjacent flipped spin at lattice site j_flipped-1 & j_flipped
+    _StatePrime.at(0, 0).at(0, j_flipped).at(0, 0) = j_flipped - 1;
+    _StatePrime.at(0, 0).at(0, j_flipped).at(1, 0) = j_flipped;
+    energy_conn[j_flipped] = -_Jx;  //non-diagonal term related to the σ̂ˣ-σ̂ˣ exchange interaction
 
   }
   if(_pbc){
 
-    _StatePrime(0, 0)(0, _Nspin).set_size(2, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to two adjacent flipped spin at the edge of the lattice site
-    _StatePrime(0, 0)(0, _Nspin)(0, 0) = _Nspin-1;
-    _StatePrime(0, 0)(0, _Nspin)(1, 0) = 0;
-    energy_conn(_Nspin) = -_Jx;
+    _StatePrime.at(0, 0).at(0, _Nspin).set_size(2, 1);  //|𝒮'⟩ ≠ |𝒮⟩ due to two adjacent flipped spin at the edge of the lattice site
+    _StatePrime.at(0, 0).at(0, _Nspin).at(0, 0) = _Nspin - 1;
+    _StatePrime.at(0, 0).at(0, _Nspin).at(1, 0) = 0;
+    energy_conn[_Nspin] = -_Jx;
 
   }
-  _Connections(0, 0) = energy_conn;
+  _Connections.at(0, 0) = energy_conn;
 
   //Pre-computed connections and associated |S'⟩ definitions for ⟨𝒮| σ̂ⱼ |𝒮'⟩
-  for(unsigned int j_flipped=0; j_flipped<_Nspin; j_flipped++){
+  for(unsigned int j_flipped = 0; j_flipped < _Nspin; j_flipped++){
 
-    _StatePrime(1, 0)(0, j_flipped).set_size(1, 1);  //σ̂ˣ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
-    _StatePrime(1, 0)(0, j_flipped)(0, 0) = j_flipped;
-    sigmax_conn(j_flipped) = 1.0;  //only non-diagonal term
-
-    _StatePrime(2, 0)(0, j_flipped).set_size(1, 1);  //σ̂ʸ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
-    _StatePrime(2, 0)(0, j_flipped)(0, 0) = j_flipped;
+    _StatePrime.at(1, 0).at(0, j_flipped).set_size(1, 1);  //σ̂ˣ, |𝒮'⟩ ≠ |𝒮⟩ due to a flipped spin at lattice site j_flipped
+    _StatePrime.at(1, 0).at(0, j_flipped).at(0, 0) = j_flipped;
+    sigmax_conn[j_flipped] = 1.0;  //only non-diagonal term
 
   }
-  _StatePrime(3, 0)(0, 0).reset();  //σ̂ᶻ, empty flipped_site matrix, i.e. |𝒮'⟩ = |𝒮⟩, only diagonal term
-  _Connections(1, 0) = sigmax_conn;
-
-  //Pre-computed connections and associated |𝒮'⟩ definitions for ⟨𝒮| σ̂ⱼσ̂ₖ |𝒮'⟩
-  /*
-    ..........
-    ..........
-    ..........
-  */
+  _Connections.at(1, 0) = sigmax_conn;
 
   //Indicates the created model
   if(rank == 0){
 
-    if(_Jx!=_Jy &&  _Jy!=_Jz && _Jz!=_Jx) std::cout << " XYZ model in 𝐝 = 𝟏 with " << _Nspin << " Quantum spins in h = " << _h << " external magnetic field." << std::endl;
-    else if(_Jx==_Jy &&  _Jy!=_Jz && _Jz!=_Jx) std::cout << " XXZ model in 𝐝 = 𝟏 with " << _Nspin << " Quantum spins in h = " << _h << " external magnetic field." << std::endl;
-    else if(_Jx==_Jy &&  _Jy==_Jz && _Jz==_Jx && _Jx!=-1.0) std::cout << " XXX model in 𝐝 = 𝟏 with " << _Nspin << " Quantum spins in h = " << _h << " external magnetic field." << std::endl;
-    else if(_Jx==-1.0 && _Jy==-1.0 && _Jz==-1.0) std::cout << " AntiFerromagnetic Heisenberg model in 𝐝 = 𝟏 with " << _Nspin << " Quantum spins in h = " << _h << " external magnetic field." << std::endl;
+    if(_Jx != _Jy &&  _Jy != _Jz && _Jz != _Jx) std::cout << " XYZ model in 𝐝 = 𝟏 with " << _Nspin << " quantum spins in 𝙝 = " << _h << " external magnetic field." << std::endl;
+    else if(_Jx == _Jy &&  _Jy != _Jz && _Jz != _Jx) std::cout << " XXZ model in 𝐝 = 𝟏 with " << _Nspin << " quantum spins in 𝙝 = " << _h << " external magnetic field." << std::endl;
+    else if(_Jx == _Jy &&  _Jy == _Jz && _Jz == _Jx && _Jx != -1.0) std::cout << " XXX model in 𝐝 = 𝟏 with " << _Nspin << " quantum spins in 𝙝 = " << _h << " external magnetic field." << std::endl;
+    else if(_Jx == -1.0 && _Jy == -1.0 && _Jz == -1.0) std::cout << " AntiFerromagnetic Heisenberg model in 𝐝 = 𝟏 with " << _Nspin << " quantum spins in 𝙝 = " << _h << " external magnetic field." << std::endl;
 
     std::cout << " Coupling constants of the Heisenberg model:" << std::endl;
-    std::cout << " \tJˣ = " << _Jx << std::endl;
-    std::cout << " \tJʸ = " << _Jy << std::endl;
-    std::cout << " \tJᶻ = " << _Jz << std::endl << std::endl;
+    std::cout << " \t𝙅ˣ = " << _Jx << std::endl;
+    std::cout << " \t𝙅ʸ = " << _Jy << std::endl;
+    std::cout << " \t𝙅ᶻ = " << _Jz << std::endl << std::endl;
 
   }
 
@@ -627,34 +562,23 @@ void Heisenberg1d :: FindConn(const Mat <int>& current_config, field <field <Mat
   state_prime = _StatePrime;
 
   //|𝒮'⟩ = |𝒮⟩, diagonal term
-  connections(0, 0)(0) = 0.0;
+  connections.at(0, 0)[0] = 0.0;
   std::complex <double> acc_J = 0.0;  //σ̂ᶻ-σ̂ᶻ interaction part of the Hamiltonian
   std::complex <double> acc_h = 0.0;  //interaction with the external magnetic field part of the Hamiltonian
-  for(unsigned int j=0; j<=(_Nspin-2); j++){
+  for(unsigned int j = 0; j <= (_Nspin - 2); j++){
 
-    acc_J += double(current_config(0, j)*current_config(0, j+1));  //Computing the interaction part σ̂ᶻ-σ̂ᶻ
-    acc_h += double(current_config(0, j));  //Computing the magnetic field interaction part
+    acc_J += double(current_config.at(0, j) * current_config.at(0, j + 1));  //Computing the interaction part σ̂ᶻ-σ̂ᶻ
+    acc_h += double(current_config.at(0, j));  //Computing the magnetic field interaction part
 
   }
-  if(_pbc) connections(0, 0)(0) = -_Jz * (acc_J + double(current_config(0, _Nspin-1)*current_config(0, 0))) - _h * (acc_h + double(current_config(0, _Nspin-1)));
-  else connections(0, 0)(0) = -_Jz * acc_J - _h * (acc_h + double(current_config(0, _Nspin-1)));
+  if(_pbc) connections.at(0, 0)[0] = -_Jz * (acc_J + double(current_config.at(0, _Nspin - 1) * current_config.at(0, 0))) - _h * (acc_h + double(current_config.at(0, _Nspin - 1)));
+  else connections.at(0, 0)[0] = -_Jz * acc_J - _h * (acc_h + double(current_config.at(0, _Nspin - 1)));
 
   //|𝒮'⟩ ≠ |𝒮⟩, non diagonal terms
   //Computing the interaction part σ̂ʸ-σ̂ʸ
-  for(unsigned int j_flipped=1; j_flipped<_Nspin; j_flipped++) connections(0, 0)(j_flipped) += _Jy * double(current_config(0, state_prime(0, 0)(0, j_flipped)(0, 0))*current_config(0, state_prime(0, 0)(0, j_flipped)(1, 0)));
-  if(_pbc) connections(0, 0)(_Nspin) += _Jy * double(current_config(0, state_prime(0, 0)(0, _Nspin)(0, 0))*current_config(0, state_prime(0, 0)(0, _Nspin)(1, 0)));
-
-  //Computing the other connections
-  Row <std::complex <double>> sigmay_conn(_Nspin, fill::zeros);
-  Row <std::complex <double>> sigmaz_conn(1, fill::zeros);
-  for(unsigned int j=0; j<_Nspin; j++){
-
-    sigmay_conn(j) = _i * double(current_config(0, j));
-    sigmaz_conn(0) += double(current_config(0, j));
-
-  }
-  connections(2, 0) = sigmay_conn;
-  connections(3, 0) = sigmaz_conn;
+  for(unsigned int j_flipped = 1; j_flipped < _Nspin; j_flipped++)
+    connections.at(0, 0)[j_flipped] += _Jy * double(current_config.at(0, state_prime.at(0, 0).at(0, j_flipped).at(0, 0)) * current_config.at(0, state_prime.at(0, 0).at(0, j_flipped).at(1, 0)));
+  if(_pbc) connections.at(0, 0)[_Nspin] += _Jy * double(current_config.at(0, state_prime.at(0, 0).at(0, _Nspin).at(0, 0)) * current_config.at(0, state_prime.at(0, 0).at(0, _Nspin).at(1, 0)));
 
 }
 /*******************************************************************************************************************************/

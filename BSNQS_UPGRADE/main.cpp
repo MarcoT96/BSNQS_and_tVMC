@@ -38,10 +38,16 @@ int main(int argc, char* argv[]){
     else Psi = new quasi_uRBM(std::stoi(options["n_visible"]), std::stoi(options["if_phi_neq_zero"]), rank);
 
   }
-  else if(options["ansatz"] == "BS_NNQS"){  //Baeriswyl-Shadow Quantum State
+  else if(options["ansatz"] == "BSWF"){  //Baeriswyl-Shadow Quantum State
 
-    if(options["filename"] != "None") Psi = new BS_NNQS(options["filename"], std::stoi(options["if_phi_neq_zero"]), rank);
-    else Psi = new BS_NNQS(std::stoi(options["n_visible"]), std::stoi(options["if_phi_neq_zero"]), rank);
+    if(options["filename"] != "None") Psi = new Baeriswyl_Shadow(options["filename"], std::stoi(options["if_phi_neq_zero"]), rank);
+    else Psi = new Baeriswyl_Shadow(std::stoi(options["n_visible"]), std::stoi(options["if_phi_neq_zero"]), rank);
+
+  }
+  else if(options["ansatz"] == "SWF_NNN"){  //Next-Nearest-Neighbors Shadow Quantum State
+
+    if(options["filename"] != "None") Psi = new SWF_NNN(options["filename"], std::stoi(options["if_phi_neq_zero"]), rank);
+    else Psi = new SWF_NNN(std::stoi(options["n_visible"]), std::stoi(options["if_phi_neq_zero"]), rank);
 
   }
   else{
@@ -81,6 +87,8 @@ int main(int argc, char* argv[]){
   if(std::stoi(options["if_write_move_statistics"])) sampler.setFile_Move_Statistics(options["file_info"], rank);
   if(std::stoi(options["if_write_MCMC_config"])) sampler.setFile_MCMC_Config(options["file_info"], rank);
   if(std::stoi(options["if_write_final_config"])) sampler.setFile_final_Config(options["file_info"], MPI_COMM_WORLD);
+  sampler.setFile_opt_Energy(options["file_info"], rank);
+  sampler.setFile_block_Energy(options["file_info"], rank);
   if(std::stoi(options["if_write_opt_obs"])) sampler.setFile_opt_Obs(options["file_info"], rank);
   if(std::stoi(options["if_write_block_obs"])) sampler.setFile_block_Obs(options["file_info"], rank);
   if(std::stoi(options["if_write_opt_params"])) sampler.setFile_opt_Params(options["file_info"], rank);
@@ -101,17 +109,17 @@ int main(int argc, char* argv[]){
   if(std::stoi(options["_if_extra_hidden_sum"])) sampler.setExtraHiddenSum(std::stoi(options["N_extra_sum"]), std::stoi(options["N_blks_hidden"]));
 
   //Chooses the appropriate algorithm
-  if(rank == 0) std::cout << "\n#Start the Variational Monte Carlo optimization algorithm." << std::endl;
+  if(rank == 0) std::cout << "\n#Start the Variational Monte Carlo algorithm." << std::endl;
   if(std::stoi(options["if_vmc"])){
 
     options["n_optimization_steps"] = "1";
-    if(rank == 0) std::cout << " Quantum properties calculation via a simple Monte Carlo (𝑴𝑪)." << std::endl;
+    if(rank == 0) std::cout << " Quantum properties calculation via a simple Variational Monte Carlo (𝐕𝐌𝐂)." << std::endl;
 
   }
   else if(std::stoi(options["if_imaginary_time"])){
 
     sampler.setImagTimeDyn(std::stod(options["delta"]));
-    if(rank == 0) std::cout << " Searching the Ground State via imaginary Time-Dependent Variational Monte Carlo (𝒊𝑻𝑫𝑽𝑴𝑪)." << std::endl;
+    if(rank == 0) std::cout << " Searching the Ground State via imaginary time-dependent Variational Monte Carlo (𝑖-𝐭𝐕𝐌𝐂)." << std::endl;
 
   }
   else if(std::stoi(options["if_real_time"])){
@@ -119,7 +127,7 @@ int main(int argc, char* argv[]){
       if(options["model"] == "Ising1d") H -> Quench(std::stod(options["h_quench"]));
       else if(options["model"] == "Heisenberg1d") H -> Quench(std::stod(options["Jz_quench"]));
       sampler.setRealTimeDyn(std::stod(options["delta"]));
-      if(rank == 0) std::cout << " Performing the dynamics via Time-Dependent Variational Monte Carlo (𝑻𝑫𝑽𝑴𝑪)." << std::endl;
+      if(rank == 0) std::cout << " Performing the quantum dynamics via time-dependent Variational Monte Carlo (𝐭𝐕𝐌𝐂)." << std::endl;
 
   }
   else{
